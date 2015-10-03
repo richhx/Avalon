@@ -107,8 +107,11 @@
 
 <template name="gameView">
   <h4><a href="#" class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a></h4>
-
-  <h4>{{_ "Choose who should be on the mission" }}</h4>
+  {{#if player.isChoosing}}
+    <h4>{{_ "Choose who should be on the mission" }}</h4>
+  {{else}}
+    <h4>{{_ "Discuss with team mates on who should be on the mission" }}</h4>
+  {{/if}}
   
   <hr>
 
@@ -120,6 +123,12 @@
         <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
         <div class="player-status player-status-bad">{{{_ "You are BAD" }}}</div>
+
+      {{/if}}
+      {{#if player.isChoosing}}
+        <div class="player-status player-status-choosing">{{_ "You are CHOOSING" }}</div>
+      {{/if}}
+
 
         <!--<div class="current-location">
           <div class="current-location-header">
@@ -138,7 +147,6 @@
             {{_ player.role }}
           </div>
         </div>
-      {{/if}}
     </div>
   </div>
 
