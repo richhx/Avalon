@@ -791,12 +791,12 @@ Template.voteMissionBad.events({
     game = getCurrentGame();
     if(game.mission == 0 || game.mission == 2) {
       if((game.passCount+game.failCount) == 2) {
-        if(game.passCount > game.failCount)
-          window.alert("Mission SUCCEEDED!");
-        else
+        if(game.failCount > 0)
           window.alert("Mission FAILED!");
+        else
+          window.alert("Mission SUCCEEDED!");
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
@@ -805,12 +805,12 @@ Template.voteMissionBad.events({
     }
     else if(game.mission == 1 || game.mission == 2) {
       if((game.passCount+game.failCount) == 3) {
-        if(game.passCount > game.failCount)
-          window.alert("Mission SUCCEEDED!");
+        if(game.failCount > 0)
+          window.alert("Mission FAILED!");
         else
-          window.alert("MISSION FAILED!");
+          window.alert("MISSION SUCCEEDED!");
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
