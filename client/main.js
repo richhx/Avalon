@@ -150,7 +150,8 @@ function generateNewPlayer(game, name){
     role: null,
     good: true,
     onMission: false,
-    hasVoteTeam: false,
+    yesVote: false,
+    noVote: false,
     hasVotePass: false,
     isChoosing: false
   };
@@ -635,10 +636,18 @@ Template.gameView.events({
     var game = getCurrentGame();
     var player = getCurrentPlayer();
     var players = Players.find({gameID: game._id});
-    if(player.hasVoteTeam == false) {
-      Players.update(player._id, {$set: {hasVoteTeam: true}});
+    // First time
+    if(!player.yesVote && !player.noVote) {
+      Players.update(player._id, {$set: {yesVote: true}});
       var y = game.yesCount+1;
       Games.update(game._id, {$set: {yesCount: y}});
+    }
+    // Voted no, switch to yes
+    else if(!player.yesVote && player.noVote) {
+      Players.update(player._id, {$set: {yesVote: true, noVote: false}});
+      var y = game.yesCount+1;
+      var n = game.noCount-1;
+      Games.update(game._id, {$set: {yesCount: y, noCount: n}});
     }
     // Check the number of votes and see if mission continues
     // if failed, rotate leader
@@ -647,14 +656,14 @@ Template.gameView.events({
     if((game.yesCount+game.noCount) == players.count()) {
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
-          Players.update(player._id, {$set: {hasVoteTeam: false}});
+          Players.update(player._id, {$set: {yesVote: false, noVote: false}});
         });
         Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});
       }
       else {
         rotateChoosing();
         players.forEach(function(player){
-          Players.update(player._id, {$set: {hasVoteTeam: false}});
+          Players.update(player._id, {$set: {yesVote: false, noVote: false}});
         });
         Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
       }
@@ -665,11 +674,20 @@ Template.gameView.events({
     var game = getCurrentGame();
     var player = getCurrentPlayer();
     var players = Players.find({gameID: game._id});
-    if(player.hasVoteTeam == false) {
-      Players.update(player._id, {$set: {hasVoteTeam: true}});
+    // First time voting
+    if(!player.noVote && !player.yesVote) {
+      Players.update(player._id, {$set: {noVote: true}});
       var n = game.noCount+1;
       Games.update(game._id, {$set: {noCount: n}});      // only do this once everyone has voted
     }
+    // Voted yes, switch to no
+    else if(!player.noVote && player.yesVote) {
+      Players.update(player._id, {$set: {noVote: true, yesVote: false}});
+      var y = game.yesCount-1;
+      var n = game.noCount+1;
+      Games.update(game._id, {$set: {noCount: n, yesCount: y}});
+    }
+
     // Check the number of votes and see if mission continues
     // if failed, rotate leader
     // else, vote pass/fail
@@ -677,14 +695,14 @@ Template.gameView.events({
     if(game.yesCount+game.noCount == players.count()) {
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
-          Players.update(player._id, {$set: {hasVoteTeam: false}});
+          Players.update(player._id, {$set: {noVote: false, yesVote: false}});
         });   
         Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});      // only do this once everyone has voted
       }
       else { 
         rotateChoosing();
         players.forEach(function(player){
-          Players.update(player._id, {$set: {hasVoteTeam: false}});
+          Players.update(player._id, {$set: {noVote: false, yesVote: false}});
         });
         Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});      // only do this once everyone has voted
       }
