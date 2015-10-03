@@ -42,10 +42,20 @@
   </div>
 </template>
 
-<template name="choose-team">
-  <h4>{{_ "Succeed or fail mission" }}</h4>
+<template name="voteMissionGood">
+  <h4>{{_ "Pass the mission" }}</h4>
   <div class="button-container">
-    <button class="btn-choose-team">{{_ "choose team" }}</button>
+    <button class="btn-vote-pass">{{_ "Pass" }}</button>
+  </div>
+</template>
+
+<template name="voteMissionBad">
+  <h4>{{_ "Pass or fail the mission" }}</h4>
+  <div class="button-container">
+    <button class="btn-vote-pass">{{_ "Pass" }}</button>
+  </div>
+  <div class="button-container">
+    <button class="btn-vote-fail">{{_ "Fail" }}</button>
   </div>
 </template>
  
@@ -110,8 +120,6 @@
 
   <h4>{{_ "Choose who should be on the mission" }}</h4>
   
-  <hr>
-
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
 
@@ -159,9 +167,11 @@
   <hr>
 
   <div class="button-container">
+    <button class="btn-yes-team">{{_ "Yes" }}</button>
+    <button class="btn-no-team">{{_ "No" }}</button>
+    <br>
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
-    <button class="btn-choose-team">{{_ "choose team" }}</button>
   </div>
 </template>
 

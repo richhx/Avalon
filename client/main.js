@@ -132,6 +132,7 @@ function generateNewPlayer(game, name){
     role: null,
     isSpy: false,
     good: true,
+    onMission: false,
     isFirstPlayer: false
   };
 
@@ -212,10 +213,24 @@ function trackGameState () {
     return;
   }
 
-  if(game.state === "inProgress"){
+  if(game.state === "inProgress") {
     Session.set("currentView", "gameView");
-  } else if (game.state === "waitingForPlayers") {
+  } 
+  else if(game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
+  }
+  else if(game.state === "voting") {
+    player.onMission = true;        // TEMPORARY. Need to change this based on who leader chooses
+    if(player.good && player.onMission) {
+      Session.set("currentView", "voteMissionGood");
+    }
+    else if (player.onMission) {
+      Session.set("currentView", "voteMissionBad");
+    }
+    else {
+      // TODO: Create separate screen
+      window.alert("please wait while others vote");
+    }
   }
 }
 
@@ -576,10 +591,55 @@ Template.gameView.events({
       Games.update(game._id, {$set: {paused: true, pausedTime: currentServerTime}});
     }
   },
-  'click .btn-choose-team': function() {
-    Session.set('currentView', 'choose-team');
-    window.alert("HELLO WOLRD");
+  'click .btn-yes-team': function() {
+    //if has not voted, increment. Need an attribute "hasVoted"
+    window.alert("YES");
+    // TODO: Check if passes
     // if failed, rotate leader
-    // else, succeed mission or pass mission (time limit?)
+    // else, succeed or pass mission if on the team
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'voting'}});      // only do this once everyone has voted
+  },
+  'click .btn-no-team': function() {
+    // if has not voted, increment
+    window.alert("NO");
+    // TODO: Check if team passes
+    // if failed, rotate leader
+    // else, succeed or pass mission if on the team
+
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'voting'}});      // only do this once everyone has voted
+  }
+});
+
+Template.voteMissionGood.events({
+  'click .btn-vote-pass': function () {
+    // increment pass count
+    // MAKE SURE cannot VOTE multiple times
+    // create player attribute, "hasPassFail"
+    window.alert("PASS");
+    // only do this once everyone has voted
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'inProgress'}});
+  }
+});
+
+Template.voteMissionBad.events({
+  'click .btn-vote-pass': function () {
+    // increment pass count
+    // MAKE SURE cannot do this multiple times
+    // create player attribute, "hasPassFail"
+    window.alert("PASS");
+    // only do this once everyone has voted
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'inProgress'}});
+  },
+  'click .btn-vote-fail': function () {
+    // increment pass count
+    // MAKE SURE cannot do this multiple times
+    // create player attribute, "hasPassFail"
+    window.alert("FAIL");
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'inProgress'}});
   }
 });
