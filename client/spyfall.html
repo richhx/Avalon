@@ -1,6 +1,6 @@
 <head>
   <meta charset="utf-8">
-  <title>Spyfall</title>
+  <title>Avalon</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
@@ -27,7 +27,7 @@
 
 <template name="startMenu">
   <div class="main-menu">
-    <h4>{{_ "ui.welcome to spyfall" }}</h4>
+    <h4>{{_ "Welcome to Avalon" }}</h4>
 
     <hr>
 
@@ -57,7 +57,7 @@
 
     <span class="access-button-separator"></span>
 
-    <a class="access-button btn-send-access-code-email" href='mailto:?subject={{_ "ui.join my spyfall game" }}&body={{ accessLink }}'>
+    <a class="access-button btn-send-access-code-email" href='mailto:?subject={{_ "ui.join my Avalon game" }}&body={{ accessLink }}'>
       <i class="fa fa-envelope-o"></i>
     </a>
   </div>
@@ -105,19 +105,19 @@
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
 
     <div class="status-container-content">
-      {{#if player.isSpy }}
-        <div class="player-status player-status-spy">{{_ "ui.you are the spy" }}</div>
+      {{#if player.good}}
+        <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
-        <div class="player-status player-status-not-spy">{{{_ "ui.you are not the spy" }}}</div>
+        <div class="player-status player-status-bad">{{{_ "You are BAD" }}}</div>
 
-        <div class="current-location">
+        <!--<div class="current-location">
           <div class="current-location-header">
             {{_ "ui.the location" }}:
           </div>
           <div class="current-location-name">
             {{_ game.location.name }}
           </div>
-        </div>
+        </div>-->
 
         <div class="current-role">
           <div class="current-role-header">
@@ -169,7 +169,7 @@
     {{#if isLoading }}
       <span class="spinner"></span>
     {{else}}
-      {{_ "ui.welcome to spyfall" }}
+      {{_ "ui.welcome to Avalon" }}
     {{/if}}
   </h4>
 
@@ -192,7 +192,7 @@
     {{#if isLoading }}
       <span class="spinner"></span>
     {{else}}
-      {{_ "ui.welcome to spyfall" }}
+      {{_ "ui.welcome to Avalon" }}
     {{/if}}
   </h4>
 

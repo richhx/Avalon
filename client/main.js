@@ -124,12 +124,14 @@ function generateNewGame(){
   return game;
 }
 
+// CHANGE THIS
 function generateNewPlayer(game, name){
   var player = {
     gameID: game._id,
     name: name,
     role: null,
     isSpy: false,
+    good: true,
     isFirstPlayer: false
   };
 
@@ -138,6 +140,7 @@ function generateNewPlayer(game, name){
   return Players.findOne(playerID);
 }
 
+// CHANGE THIS 
 function getRandomLocation(){
   var locationIndex = Math.floor(Math.random() * locations.length);
   return locations[locationIndex];
@@ -153,12 +156,20 @@ function shuffleArray(array) {
     return array;
 }
 
-function assignRoles(players, location){
-  var default_role = location.roles[location.roles.length - 1];
-  var roles = location.roles.slice();
-  var shuffled_roles = shuffleArray(roles);
-  var role = null;
+// CHANGE THIS 
+function assignRoles(players) {
+  var badIndex1 = 0;
+  //var badIndex2 = Math.floor(Math.random() * players.count());
+  /*if(badIndex2 == badIndex1) {
+    badIndex2 = Math.floor(Math.random() * players.count());
+  }*/
+  players.forEach(function(player, index){
+    if(index === badIndex1) {
+      Players.update(player._id, {$set: {good: false}});
+    }
+  });
 
+  /*
   players.forEach(function(player){
     if (!player.isSpy){
       role = shuffled_roles.pop();
@@ -169,7 +180,7 @@ function assignRoles(players, location){
 
       Players.update(player._id, {$set: {role: role}});
     }
-  });
+  });*/
 }
 
 function resetUserState(){
@@ -443,6 +454,8 @@ Template.lobby.helpers({
   }
 });
 
+
+// CHANGE THIS
 Template.lobby.events({
   'click .btn-leave': leaveGame,
   'click .btn-start': function () {
@@ -454,17 +467,18 @@ Template.lobby.events({
     var localEndTime = moment().add(game.lengthInMinutes, 'minutes');
     var gameEndTime = TimeSync.serverTime(localEndTime);
 
+    // CHANGE THIS
     var spyIndex = Math.floor(Math.random() * players.count());
     var firstPlayerIndex = Math.floor(Math.random() * players.count());
 
-    players.forEach(function(player, index){
+    /*players.forEach(function(player, index){
       Players.update(player._id, {$set: {
         isSpy: index === spyIndex,
         isFirstPlayer: index === firstPlayerIndex
       }});
-    });
+    });*/
 
-    assignRoles(players, location);
+    assignRoles(players);
     
     Games.update(game._id, {$set: {state: 'inProgress', location: location, endTime: gameEndTime, paused: false, pausedTime: null}});
   },
@@ -480,6 +494,11 @@ Template.lobby.events({
     resetUserState();
     Session.set('urlAccessCode', game.accessCode);
     Session.set('currentView', 'joinGame');
+  },
+  'click .btn-choose-team': function() {
+    window.alert("HELLO WOLRD");
+    // if failed, rotate leader
+    // else, succeed mission or pass mission (time limit?)
   }
 });
 
@@ -561,5 +580,5 @@ Template.gameView.events({
       GAnalytics.event("game-actions", "pause");
       Games.update(game._id, {$set: {paused: true, pausedTime: currentServerTime}});
     }
-  }
+  } 
 });
