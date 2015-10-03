@@ -124,6 +124,19 @@ function generateNewGame(){
   return game;
 }
 
+function rotateChoosing(){
+    var game = getCurrentGame();
+    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+    players.forEach(function(player, index){
+    if(player.isChoosing == true) {
+      Players.update(player._id, {$set: {isChoosing: false}});
+      Players.update((players[((index + 1) % players.length)])._id, {$set:
+                     {isChoosing: true}});
+      return;
+    }
+  });
+}
+
 // CHANGE THIS
 function generateNewPlayer(game, name){
   var player = {
@@ -132,7 +145,7 @@ function generateNewPlayer(game, name){
     role: null,
     good: true,
     isFirstPlayer: false,
-    isChoosing: true
+    isChoosing: false
   };
 
   var playerID = Players.insert(player);
@@ -562,6 +575,12 @@ Template.gameView.events({
 
     var game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
+  },
+
+  'click .btn-rotate': function () {
+
+    alert("Clicked!");
+    rotateChoosing();
   },
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
