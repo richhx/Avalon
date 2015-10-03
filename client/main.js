@@ -111,16 +111,12 @@ function generateNewGame(){
   var game = {
     accessCode: generateAccessCode(),
     state: "waitingForPlayers",
-    location: null,
-    lengthInMinutes: 8,
-    endTime: null,
-    paused: false,
-    pausedTime: null,
     yesCount: 0,
     noCount: 0,
     passCount: 0,
     failCount: 0,
-    mission: 0
+    mission: 0,
+    curNumPlayers: 0
   };
 
   var gameID = Games.insert(game);
@@ -128,6 +124,7 @@ function generateNewGame(){
 
   return game;
 }
+
 
 function rotateChoosing(){
     var game = getCurrentGame();
@@ -147,23 +144,15 @@ function generateNewPlayer(game, name){
   var player = {
     gameID: game._id,
     name: name,
-    role: null,
     good: true,
+    role: "Loyal Servant of Arthur",
     onMission: false,
     hasVoteTeam: false,
     hasVotePass: false,
     isChoosing: false
   };
-
   var playerID = Players.insert(player);
-
   return Players.findOne(playerID);
-}
-
-// CHANGE THIS 
-function getRandomLocation(){
-  var locationIndex = Math.floor(Math.random() * locations.length);
-  return locations[locationIndex];
 }
 
 function shuffleArray(array) {
@@ -178,20 +167,13 @@ function shuffleArray(array) {
 
 // CHANGE THIS 
 function assignRoles(players) {
-  //var badIndex2 = Math.floor(Math.random() * players.count());
-  /*if(badIndex2 == badIndex1) {
-    badIndex2 = Math.floor(Math.random() * players.count());
-  }*/
-
   var badIndex1 = Math.floor(Math.random() * players.count());
   var badIndex2 = (badIndex1 + Math.floor(Math.random() * (players.count() - 1) + 1)) %
                players.count();
 
-  alert(badIndex1);
-  alert(badIndex2);
   players.forEach(function(player, index){
     if(index === badIndex1 || index === badIndex2) {
-      Players.update(player._id, {$set: {good: false}});
+      Players.update(player._id, {$set: {good: false, role: "Minion of Mordred"}});
     }
   });
 
@@ -500,10 +482,7 @@ Template.lobby.events({
     GAnalytics.event("game-actions", "gamestart");
 
     var game = getCurrentGame();
-    var location = getRandomLocation();
     var players = Players.find({gameID: game._id});
-    var localEndTime = moment().add(game.lengthInMinutes, 'minutes');
-    var gameEndTime = TimeSync.serverTime(localEndTime);
     var firstPlayerIndex = Math.floor(Math.random() * players.count());
 
     players.forEach(function(player,index){
@@ -521,7 +500,7 @@ Template.lobby.events({
 
     assignRoles(players);
     
-    Games.update(game._id, {$set: {state: 'inProgress', location: location, endTime: gameEndTime, paused: false, pausedTime: null}});
+    Games.update(game._id, {$set: {state: 'inProgress'}});
   },
   'click .btn-toggle-qrcode': function () {
     $(".qrcode-container").toggle();
@@ -545,24 +524,6 @@ Template.lobby.rendered = function (event) {
   qrcodesvg.draw();
 };
 
-function getTimeRemaining(){
-  var game = getCurrentGame();
-  var localEndTime = game.endTime - TimeSync.serverOffset();
-
-  if (game.paused){
-    var localPausedTime = game.pausedTime - TimeSync.serverOffset();
-    var timeRemaining = localEndTime - localPausedTime;
-  } else {
-    var timeRemaining = localEndTime - Session.get('time');
-  }
-
-  if (timeRemaining < 0) {
-    timeRemaining = 0;
-  }
-
-  return timeRemaining;
-}
-
 Template.gameView.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
@@ -578,19 +539,6 @@ Template.gameView.helpers({
     });
 
     return players;
-  },
-  locations: function () {
-    return locations;
-  },
-  gameFinished: function () {
-    var timeRemaining = getTimeRemaining();
-
-    return timeRemaining === 0;
-  },
-  timeRemaining: function () {
-    var timeRemaining = getTimeRemaining();
-
-    return moment(timeRemaining).format('mm[<span>:</span>]ss');
   }
 });
 
@@ -611,24 +559,17 @@ Template.gameView.events({
   },
   
   'click .btn-choose-player': function (event) {
-    var playerID = $(event.currentTarget).data('player-id');
-      var toggled = !((Players.findOne(playerID)).onMission);
-      Players.update(playerID, {$set: {onMission: toggled}});
-      window.alert($(event.currentTarget).data('player-id'));
-  },
-  
-  'click .game-countdown': function () {
     var game = getCurrentGame();
-    var currentServerTime = TimeSync.serverTime(moment());
+    var playerID = $(event.currentTarget).data('player-id');
+    var toggled = !((Players.findOne(playerID)).onMission);
+    Players.update(playerID, {$set: {onMission: toggled}});
+    
+    /*
+    var totalNumPlayers = game.missionNum[mission];
+    var numPlayers = game.curNumPlayers + 1;
+    if (numPlayer >= totalNumPlayers) {
 
-    if(game.paused){
-      GAnalytics.event("game-actions", "unpause");
-      var newEndTime = game.endTime - game.pausedTime + currentServerTime;
-      Games.update(game._id, {$set: {paused: false, pausedTime: null, endTime: newEndTime}});
-    } else {
-      GAnalytics.event("game-actions", "pause");
-      Games.update(game._id, {$set: {paused: true, pausedTime: currentServerTime}});
-    }
+    }*/
   },
   'click .btn-yes-team': function() {
     //if has not voted, increment

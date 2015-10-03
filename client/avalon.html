@@ -127,7 +127,7 @@
   {{else}}
     <h4>{{_ "Discuss with team mates on who should be on the mission" }}</h4>
   {{/if}}
-  
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
 
@@ -139,25 +139,15 @@
 
       {{/if}}
       {{#if player.isChoosing}}
-        <div class="player-status player-status-choosing">{{_ "You are CHOOSING" }}</div>
+        <div class="player-status player-status-choosing">{{_ "You are Choosing"}}</div>
       {{/if}}
-
-
-        <!--<div class="current-location">
-          <div class="current-location-header">
-            {{_ "ui.the location" }}:
-          </div>
-          <div class="current-location-name">
-            {{_ game.location.name }}
-          </div>
-        </div>-->
 
         <div class="current-role">
           <div class="current-role-header">
             {{_ "ui.your role" }}:
           </div>
           <div class="current-role-name">
-            {{_ player.role }}
+            {{ player.role }}
           </div>
         </div>
     </div>
@@ -165,18 +155,24 @@
 
   <h5>{{_ "ui.players" }}</h5>
   <ul class="ingame-player-list">
-    {{#each players }}
+    {{#each players}}
       <li>
         <div class="playa-name">
-            <button class="btn-choose-player" data-player-id="{{ _id }}"> {{ name }} </button>
-
-          {{#if onMission }}
-
+            <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
+          {{#if onMission}}
               <i class="fa fa-pencil"></i>
           {{else}}
               <i class="fa fa-close"></i>
           {{/if}}
-
+          
+          {{#if player.good}}
+          {{else}}
+            {{#if good}}
+              <img src="/img/good.png" width="50" height="50">
+            {{else}}
+              <img src="/img/bad.png" width="50" height="50">
+            {{/if}}
+          {{/if}}
         </div>
       </li>
     {{/each}}
@@ -220,7 +216,7 @@
 
 <template name="joinGame">
   <h4>
-    {{#if isLoading }}
+    {{#if isLoading}}
       <span class="spinner"></span>
     {{else}}
       {{_ "Welcome to Avalon" }}
