@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <script language = "javascript">
+        document.firstline = "Hello world"
+    </script>
+    <title>Testing</title>
+</head>
+
+<body>
+    <form name="f1">
+        <table>
+        <tr> <td> <input name="ta1" type="text" size="20">
+        <td> <input name="ta2" type="text" size="20">
+        <td> <input name="ta3" type="text" size="20">
+        </table> 
+    </form>
+
+    <hr>
+
+    <form name="f2" action="http://netadd.com/nam.cgi" method="POST">
+        <center>
+            Name <input name="pername" type="text" size="20"><p>
+            Age  <input name="perage" type="text" size="5"><p>
+            Occupation <input name="perocc" type="text" size="20"><p>
+            <input type="Submit" value="Submit">
+            <input type="Reset" value="Reset">
+        </center>
+    </form>
+
+    <hr>
+
+    <form name="f3">
+        <table>
+        <tr> <td> <input name="ta4" type="text" size="20">
+        <td> <input name="ta5" type="text" size="20">
+        <td> <input name="ta6" type="text" size="20">
+        </table>
+    </form>
+
+    <script language = "javascript">
+        setTimeout("document.f1.ta1.value = 'Answer Soon'", 1000)
+        setTimeout("document.f1.ta1.value = ''", 1300)
+        setTimeout("document.f1.ta2.value = 'Answer Soon'", 1600)
+        setTimeout("document.f1.ta2.value = ''", 1900)
+        setTimeout("document.f1.ta3.value = 'Answer Soon'", 2200)
+        setTimeout("document.f1.ta3.value = ''", 2500)
+        setTimeout("document.f3.ta4.value = 'Answer Soon'", 2800)
+        setTimeout("document.f3.ta4.value = ''", 3100)
+        setTimeout("document.f3.ta5.value = 'Answer Soon'", 3400)
+        setTimeout("document.f3.ta5.value = ''", 3700)
+        setTimeout("document.f3.ta6.value = 'Answer Soon'", 4000)
+        setTimeout("document.f3.ta6.value = ''", 4300)
+    </script> 
+
+    <script>
+        document.open()
+        document.write(document.firstline)
+        document.open()
+    </script>
+
+</body>
+</html>
