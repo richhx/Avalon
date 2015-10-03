@@ -651,13 +651,13 @@ Template.gameView.events({
         });
         Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});
       }
-    }
-    else {
-      rotateChoosing();
-      players.forEach(function(player){
-        Players.update(player._id, {$set: {hasVoteTeam: false}});
-      });
-      Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
+      else {
+        rotateChoosing();
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVoteTeam: false}});
+        });
+        Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
+      }
     }
   },
   'click .btn-no-team': function() {
