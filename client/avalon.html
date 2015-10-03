@@ -162,11 +162,19 @@
   <ul class="ingame-player-list">
     {{#each players }}
       <li>
-        <div class="player-name">
-          {{ name }}
-          {{#if isFirstPlayer}}
-            <div class="first-player-indicator">{{{_ "ui.first" }}}</div>
+        <div class="playa-name">
+          {{#if onMission }}
+            <a href="#" class="btn-choose-player" data-player-id="{{ _id }}">
+              {{ name }}
+              <i class="fa fa-pencil"></i>
+            </a>
+          {{else}}
+            <a href="#" class="btn-choose-player" data-player-id="{{ _id }}">
+              {{ name }}
+              <i class="fa fa-close"></i>
+            </a>
           {{/if}}
+
         </div>
       </li>
     {{/each}}

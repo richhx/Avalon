@@ -145,7 +145,6 @@ function generateNewPlayer(game, name){
     role: null,
     good: true,
     onMission: false,
-    isFirstPlayer: false,
     isChoosing: false
   };
 
@@ -172,13 +171,19 @@ function shuffleArray(array) {
 
 // CHANGE THIS 
 function assignRoles(players) {
-  var badIndex1 = 0;
   //var badIndex2 = Math.floor(Math.random() * players.count());
   /*if(badIndex2 == badIndex1) {
     badIndex2 = Math.floor(Math.random() * players.count());
   }*/
+
+  var badIndex1 = Math.floor(Math.random() * players.count());
+  var badIndex2 = (badIndex1 + Math.floor(Math.random() * (players.count() - 1) + 1)) %
+               players.count();
+
+  alert(badIndex1);
+  alert(badIndex2);
   players.forEach(function(player, index){
-    if(index === badIndex1) {
+    if(index === badIndex1 || index === badIndex2) {
       Players.update(player._id, {$set: {good: false}});
     }
   });
@@ -516,16 +521,17 @@ Template.lobby.events({
   'click .btn-toggle-qrcode': function () {
     $(".qrcode-container").toggle();
   },
+  
   'click .btn-remove-player': function (event) {
     var playerID = $(event.currentTarget).data('player-id');
     Players.remove(playerID);
-  },
+  }/*,
   'click .btn-edit-player': function (event) {
     var game = getCurrentGame();
     resetUserState();
     Session.set('urlAccessCode', game.accessCode);
     Session.set('currentView', 'joinGame');
-  },
+  } */
 });
 
 Template.lobby.rendered = function (event) {
@@ -600,6 +606,14 @@ Template.gameView.events({
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
   },
+  
+  'click .btn-choose-player': function (event) {
+    var playerID = $(event.currentTarget).data('player-id');
+      var toggled = !((Players.findOne(playerID)).onMission);
+      Players.update(playerID, {$set: {onMission: toggled}});
+      window.alert($(event.currentTarget).data('player-id'));
+  },
+  
   'click .game-countdown': function () {
     var game = getCurrentGame();
     var currentServerTime = TimeSync.serverTime(moment());
