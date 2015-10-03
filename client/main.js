@@ -124,16 +124,29 @@ function generateNewGame(){
   return game;
 }
 
+function rotateChoosing(){
+    var game = getCurrentGame();
+    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+    players.forEach(function(player, index){
+    if(player.isChoosing == true) {
+      Players.update(player._id, {$set: {isChoosing: false}});
+      Players.update((players[((index + 1) % players.length)])._id, {$set:
+                     {isChoosing: true}});
+      return;
+    }
+  });
+}
+
 // CHANGE THIS
 function generateNewPlayer(game, name){
   var player = {
     gameID: game._id,
     name: name,
     role: null,
-    isSpy: false,
     good: true,
     onMission: false,
-    isFirstPlayer: false
+    isFirstPlayer: false,
+    isChoosing: false
   };
 
   var playerID = Players.insert(player);
@@ -481,10 +494,13 @@ Template.lobby.events({
     var players = Players.find({gameID: game._id});
     var localEndTime = moment().add(game.lengthInMinutes, 'minutes');
     var gameEndTime = TimeSync.serverTime(localEndTime);
-
-    // CHANGE THIS
-    var spyIndex = Math.floor(Math.random() * players.count());
     var firstPlayerIndex = Math.floor(Math.random() * players.count());
+
+    players.forEach(function(player,index){
+      Players.update(player._id, {$set: {
+        isChoosing: index === firstPlayerIndex
+      }});
+    });
 
     /*players.forEach(function(player, index){
       Players.update(player._id, {$set: {
@@ -574,6 +590,12 @@ Template.gameView.events({
 
     var game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
+  },
+
+  'click .btn-rotate': function () {
+
+    alert("Clicked!");
+    rotateChoosing();
   },
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
