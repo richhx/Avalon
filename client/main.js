@@ -115,7 +115,12 @@ function generateNewGame(){
     lengthInMinutes: 8,
     endTime: null,
     paused: false,
-    pausedTime: null
+    pausedTime: null,
+    yesCount: 0,
+    noCount: 0,
+    passCount: 0,
+    failCount: 0,
+    mission: 0
   };
 
   var gameID = Games.insert(game);
@@ -145,6 +150,8 @@ function generateNewPlayer(game, name){
     role: null,
     good: true,
     onMission: false,
+    hasVoteTeam: false,
+    hasVotePass: false,
     isFirstPlayer: false,
     isChoosing: false
   };
@@ -233,7 +240,6 @@ function trackGameState () {
     Session.set("currentView", "lobby");
   }
   else if(game.state === "voting") {
-    player.onMission = true;        // TEMPORARY. Need to change this based on who leader chooses
     if(player.good && player.onMission) {
       Session.set("currentView", "voteMissionGood");
     }
@@ -241,8 +247,7 @@ function trackGameState () {
       Session.set("currentView", "voteMissionBad");
     }
     else {
-      // TODO: Create separate screen
-      window.alert("please wait while others vote");
+      Session.set("currentView", "waitMissionComplete");
     }
   }
 }
@@ -591,9 +596,7 @@ Template.gameView.events({
     var game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
   },
-
   'click .btn-rotate': function () {
-
     alert("Clicked!");
     rotateChoosing();
   },
@@ -614,23 +617,64 @@ Template.gameView.events({
     }
   },
   'click .btn-yes-team': function() {
-    //if has not voted, increment. Need an attribute "hasVoted"
-    window.alert("YES");
-    // TODO: Check if passes
-    // if failed, rotate leader
-    // else, succeed or pass mission if on the team
+    //if has not voted, increment
     var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'voting'}});      // only do this once everyone has voted
+    var player = getCurrentPlayer();
+    var players = Players.find({gameID: game._id});
+    if(player.hasVoteTeam == false) {
+      Players.update(player._id, {$set: {hasVoteTeam: true}});
+      var y = game.yesCount+1;
+      Games.update(game._id, {$set: {yesCount: y}});
+    }
+    // Check the number of votes and see if mission continues
+    // if failed, rotate leader
+    // else, vote pass/fail
+    game = getCurrentGame();
+    if((game.yesCount+game.noCount) == players.count()) {
+      if(game.yesCount > game.noCount) {
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVoteTeam: false}});
+        });
+        Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});
+      }
+    }
+    else {
+      rotateChoosing();
+      players.forEach(function(player){
+        Players.update(player._id, {$set: {hasVoteTeam: false}});
+      });
+      Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
+    }
   },
   'click .btn-no-team': function() {
-    // if has not voted, increment
-    window.alert("NO");
-    // TODO: Check if team passes
-    // if failed, rotate leader
-    // else, succeed or pass mission if on the team
-
+    //if has not voted, increment
     var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'voting'}});      // only do this once everyone has voted
+    var player = getCurrentPlayer();
+    var players = Players.find({gameID: game._id});
+    if(player.hasVoteTeam == false) {
+      Players.update(player._id, {$set: {hasVoteTeam: true}});
+      var n = game.noCount+1;
+      Games.update(game._id, {$set: {noCount: n}});      // only do this once everyone has voted
+    }
+    // Check the number of votes and see if mission continues
+    // if failed, rotate leader
+    // else, vote pass/fail
+    game = getCurrentGame();
+    if(game.yesCount+game.noCount == players.count()) {
+      if(game.yesCount > game.noCount) {
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVoteTeam: false}});
+        });   
+        Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});      // only do this once everyone has voted
+      }
+      else { 
+        rotateChoosing();
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVoteTeam: false}});
+        });
+        Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});      // only do this once everyone has voted
+      }
+    }
   }
 });
 
@@ -642,25 +686,123 @@ Template.voteMissionGood.events({
     window.alert("PASS");
     // only do this once everyone has voted
     var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'inProgress'}});
+    var player = getCurrentPlayer();
+    var players = Players.find({gameID: game._id});
+    if(player.hasVotePass == false) {
+      Players.update(player._id, {$set: {hasVotePass: true}});
+      var p = game.passCount+1;
+      Games.update(game._id, {$set: {passCount: p}});      // only do this once everyone has voted
+    }
+    game = getCurrentGame();
+    if(game.mission == 0 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 2) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("Mission FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+      }
+      rotateChoosing();
+    }
+    else if(game.mission == 1 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 3) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("MISSION FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+        rotateChoosing();
+      }
+    }
   }
 });
 
 Template.voteMissionBad.events({
   'click .btn-vote-pass': function () {
-    // increment pass count
-    // MAKE SURE cannot do this multiple times
-    // create player attribute, "hasPassFail"
-    window.alert("PASS");
-    // only do this once everyone has voted
     var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'inProgress'}});
+    var player = getCurrentPlayer();
+    var players = Players.find({gameID: game._id});
+    if(player.hasVotePass == false) {
+      Players.update(player._id, {$set: {hasVotePass: true}});
+      var p = game.passCount+1;
+      Games.update(game._id, {$set: {passCount: p}});
+    }
+    game = getCurrentGame();
+    if(game.mission == 0 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 2) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("Mission FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+      }
+      rotateChoosing();
+    }
+    else if(game.mission == 1 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 3) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("MISSION FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+        rotateChoosing();
+      }
+    }
   },
   'click .btn-vote-fail': function () {
-    // increment pass count
-    // MAKE SURE cannot do this multiple times
-    // create player attribute, "hasPassFail"
-    window.alert("FAIL");
+    var game = getCurrentGame();
+    var player = getCurrentPlayer();
+    var players = Players.find({gameID: game._id});
+    if(player.hasVotePass == false) {
+      Players.update(player._id, {$set: {hasVotePass: true}});
+      var p = game.failCount+1;
+      Games.update(game._id, {$set: {failCount: p}});
+    }
+    game = getCurrentGame();
+    if(game.mission == 0 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 2) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("Mission FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+      }
+      rotateChoosing();
+    }
+    else if(game.mission == 1 || game.mission == 2) {
+      if((game.passCount+game.failCount) == 3) {
+        if(game.passCount > game.failCount)
+          window.alert("Mission SUCCEEDED!");
+        else
+          window.alert("MISSION FAILED!");
+        m = game.mission+1;
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        players.forEach(function(player){
+          Players.update(player._id, {$set: {hasVotePass: false}});
+        });
+        rotateChoosing();
+      }
+    }
     var game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'inProgress'}});
   }
