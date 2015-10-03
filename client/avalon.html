@@ -28,7 +28,7 @@
 <template name="startMenu">
   <div class="main-menu">
 <!--<img src='/img/avalon.jpg'/> -->
-    <h4>{{_ "Welcome to Avalon" }}</h4>
+    <h4>{{_ "Avalon" }}</h4>
 
     <hr>
 
@@ -125,7 +125,7 @@
   {{#if player.isChoosing}}
     <h4>{{_ "Choose who should be on the mission" }}</h4>
   {{else}}
-    <h4>{{_ "Discuss with team mates on who should be on the mission" }}</h4>
+    <h4>{{_ "Discuss with teammates on who should be on the mission" }}</h4>
   {{/if}}
 
   <div class="status-container">
@@ -135,23 +135,25 @@
       {{#if player.good}}
         <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
-        <div class="player-status player-status-bad">{{{_ "You are BAD" }}}</div>
+        <div class="player-status player-status-bad">{{{_ "You are EVIL" }}}</div>
 
       {{/if}}
+
       {{#if player.isChoosing}}
         <div class="player-status player-status-choosing">{{_ "You are Choosing"}}</div>
       {{/if}}
 
         <div class="current-role">
+
+       <!-- <div class="current-role">
           <div class="current-role-header">
             {{_ "ui.your role" }}:
           </div>
           <div class="current-role-name">
             {{ player.role }}
           </div>
-        </div>
+          </div>-->
     </div>
-  </div>
 
   <h5>{{_ "ui.players" }}</h5>
   <ul class="ingame-player-list">
@@ -195,7 +197,7 @@
     {{#if isLoading }}
       <span class="spinner"></span>
     {{else}}
-      {{_ "Welcome to Avalon" }}
+      {{_ "Avalon" }}
     {{/if}}
   </h4>
 
@@ -219,7 +221,7 @@
     {{#if isLoading}}
       <span class="spinner"></span>
     {{else}}
-      {{_ "Welcome to Avalon" }}
+      {{_ "Avalon" }}
     {{/if}}
   </h4>
 
@@ -261,6 +263,6 @@
   <div class="footer">
     {{{_ "ui.footer" }}}
     <br>
-    <a href="https://github.com/evanbrumley/spyfall" target="_blank">https://github.com/evanbrumley/spyfall</a>
+    <a href="https://github.com/richhx/Avalon" target="_blank">https://github.com/richhx/Avalon</a>
   </div>
 </template>
