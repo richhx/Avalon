@@ -495,11 +495,6 @@ Template.lobby.events({
     Session.set('urlAccessCode', game.accessCode);
     Session.set('currentView', 'joinGame');
   },
-  'click .btn-choose-team': function() {
-    window.alert("HELLO WOLRD");
-    // if failed, rotate leader
-    // else, succeed mission or pass mission (time limit?)
-  }
 });
 
 Template.lobby.rendered = function (event) {
@@ -580,5 +575,11 @@ Template.gameView.events({
       GAnalytics.event("game-actions", "pause");
       Games.update(game._id, {$set: {paused: true, pausedTime: currentServerTime}});
     }
-  } 
+  },
+  'click .btn-choose-team': function() {
+    Session.set('currentView', 'choose-team');
+    window.alert("HELLO WOLRD");
+    // if failed, rotate leader
+    // else, succeed mission or pass mission (time limit?)
+  }
 });

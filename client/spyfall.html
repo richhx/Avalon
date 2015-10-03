@@ -42,6 +42,13 @@
   </div>
 </template>
 
+<template name="choose-team">
+  <h4>{{_ "Succeed or fail mission" }}</h4>
+  <div class="button-container">
+    <button class="btn-choose-team">{{_ "choose team" }}</button>
+  </div>
+</template>
+ 
 <template name="lobby">
   <h4>{{_ "ui.waiting for players" }}</h4>
 
@@ -101,6 +108,10 @@
 <template name="gameView">
   <h4><a href="#" class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a></h4>
 
+  <h4>{{_ "Choose who should be on the mission" }}</h4>
+  
+  <hr>
+
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
 
@@ -145,22 +156,12 @@
     {{/each}}
   </ul>
 
-  <div class="u-cf"></div>
-  
-  <h5>{{_ "ui.location reference" }}</h5>
-  <ul class="location-list">
-    {{#each locations }}
-      <li>
-        <div class="location-name">{{_ name }}</div>
-      </li>
-    {{/each}}
-  </ul>
-
   <hr>
 
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    <button class="btn-choose-team">{{_ "choose team" }}</button>
   </div>
 </template>
 
@@ -169,9 +170,10 @@
     {{#if isLoading }}
       <span class="spinner"></span>
     {{else}}
-      {{_ "ui.welcome to Avalon" }}
+      {{_ "Welcome to Avalon" }}
     {{/if}}
   </h4>
+
 
   <hr>
 
@@ -192,7 +194,7 @@
     {{#if isLoading }}
       <span class="spinner"></span>
     {{else}}
-      {{_ "ui.welcome to Avalon" }}
+      {{_ "Welcome to Avalon" }}
     {{/if}}
   </h4>
 
