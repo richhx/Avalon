@@ -232,26 +232,19 @@
     {{#each players}}
       <li>
         <div class="playa-name">
-          {{#if player.isChoosing}}
-            <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
-          {{else}}
-            {{name}}
-          {{/if}}
-
           {{#if onMission}}
-              <i class="fa fa-pencil"></i>
-          {{else}}
-              <i class="fa fa-close"></i>
-          {{/if}}
-          
-          {{#if player.good}}
-          {{else}}
-            {{#if good}}
-              <img src="/img/good.png" width="50" height="50">
+            {{name}}
+            {{#if player.good}}
             {{else}}
-              <img src="/img/bad.png" width="50" height="50">
+              {{#if good}}
+                <img src="/img/good.png" width="50" height="50">
+              {{else}}
+                <img src="/img/bad.png" width="50" height="50">
+              {{/if}}
             {{/if}}
           {{/if}}
+
+
         </div>
       </li>
     {{/each}}

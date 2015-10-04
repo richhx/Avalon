@@ -552,6 +552,25 @@ Template.gameView.helpers({
   }
 });
 
+
+Template.votingRound.helpers({
+  game: getCurrentGame,
+  player: getCurrentPlayer,
+  players: function () {
+    var game = getCurrentGame();
+    
+    if (!game){
+      return null;
+    }
+
+    var players = Players.find({
+      'gameID': game._id
+    });
+
+    return players;
+  }
+});
+
 Template.gameView.events({
   'click .btn-leave': leaveGame,
   'click .btn-end': function () {
