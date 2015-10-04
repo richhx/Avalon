@@ -120,7 +120,9 @@ function generateNewGame(){
     noCount: 0,
     passCount: 0,
     failCount: 0,
-    mission: 0
+    mission: 0,
+    curNumPlayers: 0,
+    readyToConfirm: true
   };
 
   var gameID = Games.insert(game);
@@ -243,6 +245,9 @@ function trackGameState () {
   } 
   else if(game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
+  }
+  else if(game.state === "votingRound") {
+    Session.set("currentView", "votingRound");
   }
   else if(game.state === "voting") {
     if(player.good && player.onMission) {
@@ -630,6 +635,8 @@ Template.gameView.events({
       Games.update(game._id, {$set: {paused: true, pausedTime: currentServerTime}});
     }
   },
+});
+Template.votingRound.events({
   'click .btn-yes-team': function() {
     //if has not voted, increment
     var game = getCurrentGame();
@@ -690,6 +697,32 @@ Template.gameView.events({
       }
     }
   }
+});
+
+Template.gameView.events({
+  'click .btn-leave': leaveGame,
+  'click .btn-end': function () {
+    GAnalytics.event("game-actions", "gameend");
+
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
+  },
+  
+  'click .btn-toggle-status': function () {
+    $(".status-container-content").toggle();
+  },
+  'click .btn-choose-player': function (event) {
+    var playerID = $(event.currentTarget).data('player-id');
+    var toggled = !((Players.findOne(playerID)).onMission);
+    Players.update(playerID, {$set: {onMission: toggled}});
+  },
+
+  'click .btn-confirm-team': function () {
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'votingRound', readyToConfirm: false}});
+
+  }
+
 });
 
 Template.voteMissionGood.events({
