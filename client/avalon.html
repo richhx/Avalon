@@ -42,6 +42,20 @@
   </div>
 </template>
 
+<template name="doneVoting">
+  <h4>{{_ "Mission Status" }}</h4>
+  <hr>
+  {{ #if game.failCount }}
+    <h5>{{_ "FAILED" }}</h5>
+  {{ else }}
+    <h5>{{_ "PASSED" }}</h5>
+  {{/if}}
+  <hr>
+  <div class="button-container">
+    <button class="btn-continue">{{_ "Continue" }}</button>
+  </div>
+</template>
+
 <template name="voteMissionGood">
   <h4>{{_ "Pass the mission" }}</h4>
   <div class="button-container">
