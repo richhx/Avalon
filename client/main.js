@@ -22,6 +22,15 @@ function getUserLanguage() {
   }
 };
 
+function resetOnMission() {
+  var game = getCurrentGame(); 
+  var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+  
+  players.forEach(function(player){
+    Players.update(player._id, {$set: {onMission: false}});
+  });
+}
+
 function setUserLanguage(language) {
   TAPi18n.setLanguage(language).done(function () {
     Session.set("language", language);
@@ -403,8 +412,13 @@ Template.joinGame.events({
         accessCode: accessCode
       });
       var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+      
+      if (game.state === "inProgress"){
+       window.alert("Game in session. Cannot join"); 
+       Session.set("currentView", "startMenu");
+      }
 
-      if (game) {
+      else if (game) {
         Meteor.subscribe('players', game._id);
         player = generateNewPlayer(game, playerName);
 
@@ -412,7 +426,8 @@ Template.joinGame.events({
         Session.set("gameID", game._id);
         Session.set("playerID", player._id);
         Session.set("currentView", "lobby");
-      } else {
+      } 
+      else {
         FlashMessages.sendError(TAPi18n.__("ui.invalid access code"));
         GAnalytics.event("game-actions", "invalidcode");
       }
@@ -522,6 +537,25 @@ Template.lobby.rendered = function (event) {
 };
 
 Template.gameView.helpers({
+  game: getCurrentGame,
+  player: getCurrentPlayer,
+  players: function () {
+    var game = getCurrentGame();
+    
+    if (!game){
+      return null;
+    }
+
+    var players = Players.find({
+      'gameID': game._id
+    });
+
+    return players;
+  }
+});
+
+
+Template.votingRound.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
   players: function () {
@@ -674,18 +708,7 @@ Template.votingRound.events({
     }
   }
 });
-var game = {
-    accessCode: generateAccessCode(),
-    state: "waitingForPlayers",
-    yesCount: 0,
-    noCount: 0,
-    passCount: 0,
-    failCount: 0,
-    expMission: [2,3,2,3,3],
-    mission: 0,
-    readyToConfirm: false,
-    missionSuccess: 0
-  }
+
 Template.gameWin.events({
   'click .btn-return': function () {
     var game = getCurrentGame();
@@ -809,6 +832,7 @@ Template.voteMissionBad.events({
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
+      resetOnPosition();
       rotateChoosing();
     }
     else if(game.mission == 1 || game.mission >= 3) {
@@ -822,6 +846,7 @@ Template.voteMissionBad.events({
         players.forEach(function(player) {
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
+        resetOnPosition();
         rotateChoosing();
       }
     }
@@ -849,6 +874,7 @@ Template.voteMissionBad.events({
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
+      resetOnPosition();
       rotateChoosing();
     }
     else if(game.mission == 1 || game.mission >= 3) {
@@ -862,6 +888,7 @@ Template.voteMissionBad.events({
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
+        resetOnPosition();
         rotateChoosing();
       }
     }

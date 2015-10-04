@@ -235,29 +235,30 @@
       {{#if player.good}}
         <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
-        <div class="player-status player-status-bad">{{{_ "You are EVIL" }}}</div>
+        <div class="player-status player-status-bad">{{_ "You are EVIL" }}</div>
       {{/if}}
     </div>
   </div>
 
 
-  <h5>{{_ "Team" }}</h5>
+  <h5>{{_ "ui.players" }}</h5>
   <ul class="ingame-player-list">
     {{#each players}}
       <li>
         <div class="playa-name">
-          {{#if player.onMission}}
+          {{#if onMission}}
             {{name}}
-          {{/if}}
-
-          {{#if player.good}}
-          {{else}}
-            {{#if good}}
-              <img src="/img/good.png" width="50" height="50">
+            {{#if player.good}}
             {{else}}
-              <img src="/img/bad.png" width="50" height="50">
+              {{#if good}}
+                <img src="/img/good.png" width="50" height="50">
+              {{else}}
+                <img src="/img/bad.png" width="50" height="50">
+              {{/if}}
             {{/if}}
           {{/if}}
+
+
         </div>
       </li>
     {{/each}}
