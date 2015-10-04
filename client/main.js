@@ -757,10 +757,9 @@ Template.doneVoting.helpers({
 
 Template.doneVoting.events({
   'click .btn-continue': function() {
-    window.alert('you clicked me!');
     var game = getCurrentGame();
-    Session.set('currentView', 'gameView');
-    Games.update(game._id, {$set: {state: 'inProgress', failCount: 0, passCount: 0}});
+    Games.update(game._id, {$set: {state: "inProgress", failCount: 0, passCount: 0}})
+    
   }
 });
 
