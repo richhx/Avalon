@@ -1,7 +1,6 @@
 <head>
   <meta charset="utf-8">
   <title>Avalon</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <link href='http://fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600&subset=latin,vietnamese,latin-ext' rel='stylesheet' type='text/css'>
@@ -137,6 +136,14 @@
 </template>
 
 <template name="gameView">
+  <div class="row">
+    <div class="col-5" id="circle1">2</div>
+    <div class="col-5" id="circle2">3</div>
+    <div class="col-5" id="circle3">2</div>
+    <div class="col-5" id="circle4">3</div>
+    <div class="col-5" id="circle5">3</div>
+  </div>
+
   {{#if player.isChoosing}}
     <h4>{{_ "It's Your Turn to Pick a Team!"}}</h4>
     <h4>{{_ "Choose who should be on the mission" }}</h4>
@@ -167,20 +174,18 @@
     {{#each players}}
       <li>
         <div class="ingame-player-list li">
-        {{#if isChoosing}}
-          <img src="/img/star.png" width="30" height="30" style="margin-top:10px">
-        {{/if}}
-
-        {{#if player.isChoosing}}
+          {{#if player.isChoosing}}
           <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
           {{else}}
-            {{name}}
+            {{#if isChoosing}}
+            <i style="color:blue">{{name}}</i>
+            {{else}}
+              {{name}}
+            {{/if}}
           {{/if}}
 
           {{#if onMission}}
               <i class="fa fa-pencil"></i>
-          {{else}}
-              <i class="fa fa-close"></i>
           {{/if}}
           
           {{#if player.good}}

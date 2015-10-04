@@ -365,7 +365,6 @@ Template.createGame.events({
       Session.set("playerID", player._id);
       Session.set("currentView", "lobby");
     });
-
     return false;
   },
   'click .btn-back': function () {
@@ -529,16 +528,13 @@ Template.gameView.helpers({
   game: getCurrentGame,
   player: getCurrentPlayer,
   players: function () {
-    var game = getCurrentGame();
-    
+    var game = getCurrentGame();    
     if (!game){
       return null;
     }
-
     var players = Players.find({
       'gameID': game._id
     });
-
     return players;
   }
 });
@@ -550,10 +546,6 @@ Template.gameView.events({
 
     var game = getCurrentGame();
     Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
-  },
-  'click .btn-rotate': function () {
-    alert("Rotated the leader!");
-    rotateChoosing();
   },
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
@@ -585,8 +577,6 @@ Template.gameView.events({
     else {
       Games.update(game._id, {$set: {readyToConfirm: false}});
     }
-
-
   },
 });
 
@@ -600,6 +590,7 @@ Template.votingRound.events({
     var game = getCurrentGame();
     var player = getCurrentPlayer();
     var players = Players.find({gameID: game._id});
+    
     // First time
     if(!player.yesVote && !player.noVote) {
       Players.update(player._id, {$set: {yesVote: true}});
@@ -842,13 +833,3 @@ Template.voteMissionBad.events({
     }
   }
 });
-
-function changeYes() {
-  var property = document.getElementById(yes_btn);
-  property.style.backgroundColor = "#32CD32";
-}
-
-function changeNo() {
-  var property = document.getElementById(no_btn);
-  property.style.backgroundColor = "#32CD32";
-}
