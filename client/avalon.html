@@ -121,12 +121,13 @@
 </template>
 
 <template name="gameView">
-  <h4><a href="#" class="game-countdown {{#if gameFinished }}finished{{/if}} {{#if game.paused }}paused{{/if}}">{{{ timeRemaining }}}</a></h4>
   {{#if player.isChoosing}}
+    <h4>{{_ "It's Your Turn to Pick a Team!"}}</h4>
     <h4>{{_ "Choose who should be on the mission" }}</h4>
   {{else}}
     <h4>{{_ "Discuss with teammates on who should be on the mission" }}</h4>
   {{/if}}
+
 
   <div class="status-container">
     <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
@@ -136,15 +137,7 @@
         <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
         <div class="player-status player-status-bad">{{{_ "You are EVIL" }}}</div>
-
       {{/if}}
-
-      {{#if player.isChoosing}}
-        <div class="player-status player-status-choosing">{{_ "You are Choosing"}}</div>
-      {{/if}}
-
-        
-
        <!-- <div class="current-role">
           <div class="current-role-header">
             {{_ "ui.your role" }}:
@@ -160,7 +153,10 @@
   <ul class="ingame-player-list">
     {{#each players}}
       <li>
-        <div class="playa-name">
+        <div class="ingame-player-list li">
+        {{#if isChoosing}}
+          <img src="/img/star.png" width="30" height="30" style="margin-top:10px">
+        {{/if}}
             <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
           {{#if onMission}}
               <i class="fa fa-pencil"></i>
@@ -171,9 +167,9 @@
           {{#if player.good}}
           {{else}}
             {{#if good}}
-              <img src="/img/good.png" width="50" height="50">
+              <img src="/img/good.png" width="38" height="38" style="margin-top:10px">
             {{else}}
-              <img src="/img/bad.png" width="50" height="50">
+              <img src="/img/bad.png" width="38" height="38" style="margin-top:10px">
             {{/if}}
           {{/if}}
         </div>
@@ -184,11 +180,10 @@
   <hr>
 
   <div class="button-container">
-    <button class="btn-yes-team">{{_ "Yes" }}</button>
-    <button class="btn-no-team">{{_ "No" }}</button>
+    <button id = "yes_btn" class="btn-yes-team">{{_ "Yes" }}</button>
+    <button id = "no_btn" class="btn-no-team">{{_ "No" }}</button>
     <br>
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <button class="btn-rotate">{{_ "rotate" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
   </div>
 </template>

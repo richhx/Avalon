@@ -116,7 +116,7 @@ function generateNewGame(){
     passCount: 0,
     failCount: 0,
     mission: 0,
-    curNumPlayers: 0
+    curNumPlayers: 0,
   };
 
   var gameID = Games.insert(game);
@@ -132,8 +132,7 @@ function rotateChoosing(){
     players.forEach(function(player, index){
     if(player.isChoosing == true) {
       Players.update(player._id, {$set: {isChoosing: false}});
-      Players.update((players[((index + 1) % players.length)])._id, {$set:
-                     {isChoosing: true}});
+      Players.update((players[((index + 1) % players.length)])._id, {$set: {isChoosing: true}});
       return;
     }
   });
@@ -150,7 +149,7 @@ function generateNewPlayer(game, name){
     yesVote: false,
     noVote: false,
     hasVotePass: false,
-    isChoosing: false
+    isChoosing: false,
   };
   var playerID = Players.insert(player);
   return Players.findOne(playerID);
@@ -474,20 +473,9 @@ Template.lobby.events({
     var firstPlayerIndex = Math.floor(Math.random() * players.count());
 
     players.forEach(function(player,index){
-      Players.update(player._id, {$set: {
-        isChoosing: index === firstPlayerIndex
-      }});
+      Players.update(player._id, {$set: {isChoosing: index === firstPlayerIndex}});
     });
-
-    /*players.forEach(function(player, index){
-      Players.update(player._id, {$set: {
-        isSpy: index === spyIndex,
-        isFirstPlayer: index === firstPlayerIndex
-      }});
-    });*/
-
     assignRoles(players);
-    
     Games.update(game._id, {$set: {state: 'inProgress'}});
   },
   'click .btn-toggle-qrcode': function () {
@@ -551,6 +539,10 @@ Template.gameView.events({
     Players.update(playerID, {$set: {onMission: toggled}});
   },
   'click .btn-yes-team': function() {
+    //Change the color onclick
+    document.getElementById("yes_btn").style.backgroundColor="#32CD32";
+    document.getElementById("no_btn").style.backgroundColor="#ffffff";
+
     //if has not voted, increment
     var game = getCurrentGame();
     var player = getCurrentPlayer();
@@ -589,6 +581,10 @@ Template.gameView.events({
     }
   },
   'click .btn-no-team': function() {
+    //Change color to red on click
+    document.getElementById("no_btn").style.backgroundColor="#ff0000";
+    document.getElementById("yes_btn").style.backgroundColor="#ffffff";
+
     //if has not voted, increment
     var game = getCurrentGame();
     var player = getCurrentPlayer();
@@ -760,3 +756,13 @@ Template.voteMissionBad.events({
     Games.update(game._id, {$set: {state: 'inProgress'}});
   }
 });
+
+function changeYes() {
+  var property = document.getElementById(yes_btn);
+  property.style.backgroundColor = "#32CD32";
+}
+
+function changeNo() {
+  var property = document.getElementById(no_btn);
+  property.style.backgroundColor = "#32CD32";
+}
