@@ -680,13 +680,19 @@ Template.votingRound.events({
 
 Template.gameWin.events({
   'click .btn-return': function () {
-    Session.set("currentView", "lobby");
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: "waitingForPlayers"}});
+    Games.update(game._id, {$set: {missionSuccess: 0, mission: 0}});
+    Session.set("currentView", "startMenu");
   }
 });
 
 Template.gameLose.events({
   'click .btn-return': function () {
-    Session.set("currentView", "lobby");
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: "waitingForPlayers"}});
+    Games.update(game._id, {$set: {missionSuccess: 0, mission: 0}});
+    Session.set("currentView", "startMenu");
   }
 });
 
