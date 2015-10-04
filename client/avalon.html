@@ -170,6 +170,8 @@
         {{#if isChoosing}}
           <img src="/img/star.png" width="30" height="30" style="margin-top:10px">
         {{/if}}
+
+        {{#if player.isChoosing}}
           <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
           {{else}}
             {{name}}
