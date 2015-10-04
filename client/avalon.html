@@ -161,7 +161,12 @@
     {{#each players}}
       <li>
         <div class="playa-name">
+          {{#if player.isChoosing}}
             <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
+          {{else}}
+            {{name}}
+          {{/if}}
+
           {{#if onMission}}
               <i class="fa fa-pencil"></i>
           {{else}}
@@ -184,12 +189,13 @@
   <hr>
 
   {{#if game.readyToConfirm}}
-    <button class="btn-confirm-team">{{_ "Confirm" }} </button>
+    {{#if player.isChoosing}}
+      <button class="btn-confirm-team">{{_ "Confirm" }} </button>
+    {{/if}}
   {{/if}}  
 
   <div class="button-container">
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <button class="btn-rotate">{{_ "rotate" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button>
   </div>
 </template>

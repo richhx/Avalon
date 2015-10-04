@@ -115,9 +115,10 @@ function generateNewGame(){
     noCount: 0,
     passCount: 0,
     failCount: 0,
+    expMission: [2,3,2,3,3],
     mission: 0,
     curNumPlayers: 0,
-    readyToConfirm: true
+    readyToConfirm: false
   };
 
   var gameID = Games.insert(game);
@@ -549,12 +550,38 @@ Template.gameView.events({
   'click .btn-toggle-status': function () {
     $(".status-container-content").toggle();
   },
+
+  'click .btn-confirm-team': function () {
+    var game = getCurrentGame();
+    Games.update(game._id, {$set: {state: 'votingRound', readyToConfirm: false}});
+  },
+
   'click .btn-choose-player': function (event) {
     var playerID = $(event.currentTarget).data('player-id');
     var toggled = !((Players.findOne(playerID)).onMission);
+    var game = getCurrentGame();
+
     Players.update(playerID, {$set: {onMission: toggled}});
+    var curOnMission = 0;
+    var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+
+    players.forEach(function(player){
+      if (player.onMission == true){
+        curOnMission++;
+      }
+    });
+
+    if (curOnMission == game.expMission[game.mission]) {
+      Games.update(game._id, {$set: {readyToConfirm: true}});
+    }
+    else {
+      Games.update(game._id, {$set: {readyToConfirm: false}});
+    }
+
+
   },
 });
+
 Template.votingRound.events({
   'click .btn-yes-team': function() {
     //if has not voted, increment
@@ -594,6 +621,7 @@ Template.votingRound.events({
       }
     }
   },
+
   'click .btn-no-team': function() {
     //if has not voted, increment
     var game = getCurrentGame();
@@ -635,31 +663,6 @@ Template.votingRound.events({
   }
 });
 
-Template.gameView.events({
-  'click .btn-leave': leaveGame,
-  'click .btn-end': function () {
-    GAnalytics.event("game-actions", "gameend");
-
-    var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'waitingForPlayers'}});
-  },
-  
-  'click .btn-toggle-status': function () {
-    $(".status-container-content").toggle();
-  },
-  'click .btn-choose-player': function (event) {
-    var playerID = $(event.currentTarget).data('player-id');
-    var toggled = !((Players.findOne(playerID)).onMission);
-    Players.update(playerID, {$set: {onMission: toggled}});
-  },
-
-  'click .btn-confirm-team': function () {
-    var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'votingRound', readyToConfirm: false}});
-
-  }
-
-});
 
 Template.voteMissionGood.events({
   'click .btn-vote-pass': function () {
