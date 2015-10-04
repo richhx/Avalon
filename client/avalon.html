@@ -63,6 +63,22 @@
 <template name="waitMissionComplete">
   <h4>{{_ "Please wait for the players to complete the mission" }}</h4>
 </template>
+
+<template name="gameWin">
+  <h3>{{_ "Game Over!" }}</h3>
+  <h4>{{_ "The good guys have passed a majority of the missions!" }}</h4>
+  <div class="button-container">
+    <button class="btn-return">{{_ "Return to lobby"}}</button>
+  </div>
+</template>
+
+<template name="gameLose">
+  <h3>{{_ "Game Over!" }}</h3>
+  <h4>{{_ "The bad guys have sabotaged a majority of the missions!" }}</h4>
+  <div class="button-container">
+    <button class="btn-return">{{_ "Return to lobby"}}</button>
+  </div>
+</template>
  
 <template name="lobby">
   <h4>{{_ "ui.waiting for players" }}</h4>

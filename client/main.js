@@ -119,6 +119,7 @@ function generateNewGame(){
     mission: 0,
     curNumPlayers: 0,
     readyToConfirm: false
+    missionSuccess: 0
   };
 
   var gameID = Games.insert(game);
@@ -152,7 +153,7 @@ function generateNewPlayer(game, name){
     yesVote: false,
     noVote: false,
     hasVotePass: false,
-    isChoosing: false
+    isChoosing: false,
   };
   var playerID = Players.insert(player);
   return Players.findOne(playerID);
@@ -230,6 +231,14 @@ function trackGameState () {
       Session.set("currentView", "waitMissionComplete");
     }
   }
+
+  if (game.missionSuccess == 3) {
+    Session.set("currentView", "gameWin");
+  }
+  else if (game.mission - game.missionSuccess == 3) {
+    Session.set("currentView", "gameLose");
+  }
+  
 }
 
 function leaveGame () {  
@@ -663,6 +672,17 @@ Template.votingRound.events({
   }
 });
 
+Template.gameWin.events({
+  'click .btn-return': function () {
+    Session.set("currentView", "lobby");
+  }
+});
+
+Template.gameLose.events({
+  'click .btn-return': function () {
+    Session.set("currentView", "lobby");
+  }
+});
 
 Template.voteMissionGood.events({
   'click .btn-vote-pass': function () {
@@ -685,23 +705,31 @@ Template.voteMissionGood.events({
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
+        {
           window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
       rotateChoosing();
     }
-    else if(game.mission == 1 || game.mission == 2) {
+    else if(game.mission == 1 || game.mission >= 3) {
       if((game.passCount+game.failCount) == 3) {
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
+        {
           window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
@@ -728,23 +756,31 @@ Template.voteMissionBad.events({
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
+        {
           window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
       rotateChoosing();
     }
-    else if(game.mission == 1 || game.mission == 2) {
+    else if(game.mission == 1 || game.mission >= 3) {
       if((game.passCount+game.failCount) == 3) {
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
+        {
           window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
-        Games.update(game._id, {$set: {state: 'inProgress', mission: m}});
+        Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
@@ -768,7 +804,11 @@ Template.voteMissionBad.events({
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
+        {
           window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
         Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
@@ -777,12 +817,16 @@ Template.voteMissionBad.events({
       }
       rotateChoosing();
     }
-    else if(game.mission == 1 || game.mission == 2) {
+    else if(game.mission == 1 || game.mission >= 3) {
       if((game.passCount+game.failCount) == 3) {
         if(game.failCount > 0)
           window.alert("Mission FAILED! There were "+game.failCount+" failures");
         else
-          window.alert("MISSION SUCCEEDED!");
+        {
+          window.alert("Mission SUCCEEDED!");
+          var g = game.missionSuccess+1;
+          Games.update(game._id, {$set: {missionSuccess: g}});
+        }
         m = game.mission+1;
         Games.update(game._id, {$set: {state: 'inProgress', mission: m, failCount: 0, passCount: 0}});
         players.forEach(function(player){
