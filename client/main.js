@@ -678,19 +678,7 @@ Template.votingRound.events({
     }
   }
 });
-var game = {
-    accessCode: generateAccessCode(),
-    state: "waitingForPlayers",
-    yesCount: 0,
-    noCount: 0,
-    passCount: 0,
-    failCount: 0,
-    expMission: [2,3,2,3,3],
-    mission: 0,
-    curNumPlayers: 0,
-    readyToConfirm: false,
-    missionSuccess: 0
-  }
+
 Template.gameWin.events({
   'click .btn-return': function () {
     var game = getCurrentGame();
