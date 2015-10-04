@@ -416,8 +416,13 @@ Template.joinGame.events({
         accessCode: accessCode
       });
       var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+      
+      if (game.state === "inProgress"){
+       window.alert("Game in session. Cannot join"); 
+       Session.set("currentView", "startMenu");
+      }
 
-      if (game) {
+      else if (game) {
         Meteor.subscribe('players', game._id);
         player = generateNewPlayer(game, playerName);
 
@@ -425,7 +430,8 @@ Template.joinGame.events({
         Session.set("gameID", game._id);
         Session.set("playerID", player._id);
         Session.set("currentView", "lobby");
-      } else {
+      } 
+      else {
         FlashMessages.sendError(TAPi18n.__("ui.invalid access code"));
         GAnalytics.event("game-actions", "invalidcode");
       }
