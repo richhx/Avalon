@@ -63,6 +63,22 @@
 <template name="waitMissionComplete">
   <h4>{{_ "Please wait for the players to complete the mission" }}</h4>
 </template>
+
+<template name="gameWin">
+  <h3>{{_ "Game Over!" }}</h3>
+  <h4>{{_ "The good guys have passed a majority of the missions!" }}</h4>
+  <div class="button-container">
+    <button class="btn-return">{{_ "Return to lobby"}}</button>
+  </div>
+</template>
+
+<template name="gameLose">
+  <h3>{{_ "Game Over!" }}</h3>
+  <h4>{{_ "The bad guys have sabotaged a majority of the missions!" }}</h4>
+  <div class="button-container">
+    <button class="btn-return">{{_ "Return to lobby"}}</button>
+  </div>
+</template>
  
 <template name="lobby">
   <h4>{{_ "ui.waiting for players" }}</h4>
@@ -151,7 +167,12 @@
     {{#each players}}
       <li>
         <div class="playa-name">
+          {{#if player.isChoosing}}
             <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
+          {{else}}
+            {{name}}
+          {{/if}}
+
           {{#if onMission}}
               <i class="fa fa-pencil"></i>
           {{else}}
@@ -173,15 +194,66 @@
   
   <hr>
 
+  {{#if game.readyToConfirm}}
+    {{#if player.isChoosing}}
+      <button class="btn-confirm-team">{{_ "Confirm" }} </button>
+    {{/if}}
+  {{/if}}  
+
   <div class="button-container">
-    <button class="btn-yes-team">{{_ "Yes" }}</button>
-    <button class="btn-no-team">{{_ "No" }}</button>
-    <br>
     <button class="btn-end">{{_ "ui.end game" }}</button>
     <!--  <button class="btn-rotate">{{_ "rotate" }}</button>
     <button class="btn-leave">{{_ "ui.leave game" }}</button> -->
   </div>
 </template>
+
+
+<template name="votingRound">
+  <h4>{{_ "Vote yes/no for this team combination" }}</h4>
+  <div class="status-container">
+    <button class="btn-toggle-status">{{_ "ui.show hide" }}</button>
+
+    <div class="status-container-content">
+      {{#if player.good}}
+        <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
+      {{else}}
+        <div class="player-status player-status-bad">{{{_ "You are EVIL" }}}</div>
+      {{/if}}
+    </div>
+  </div>
+
+
+  <h5>{{_ "Team" }}</h5>
+  <ul class="ingame-player-list">
+    {{#each players}}
+      <li>
+        <div class="playa-name">
+          {{#if player.onMission}}
+            {{name}}
+          {{/if}}
+
+          {{#if player.good}}
+          {{else}}
+            {{#if good}}
+              <img src="/img/good.png" width="50" height="50">
+            {{else}}
+              <img src="/img/bad.png" width="50" height="50">
+            {{/if}}
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+  </ul>
+
+  <hr>
+
+
+  <div class="button-container">
+    <button class="btn-yes-team">{{_ "Yes" }}</button>
+    <button class="btn-no-team">{{_ "No" }}</button>
+  </div>
+</template>
+
 
 <template name="createGame">
   <h4>
