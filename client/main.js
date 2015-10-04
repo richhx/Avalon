@@ -22,6 +22,15 @@ function getUserLanguage() {
   }
 };
 
+function resetOnMission() {
+  var game = getCurrentGame(); 
+  var players = Players.find({'gameID': game._id}, {'sort': {'createdAt': 1}}).fetch();
+  
+  players.forEach(function(player){
+    Players.update(player._id, {$set: {onMission: false}});
+  });
+}
+
 function setUserLanguage(language) {
   TAPi18n.setLanguage(language).done(function () {
     Session.set("language", language);
@@ -767,6 +776,7 @@ Template.voteMissionBad.events({
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
+      resetOnPosition();
       rotateChoosing();
     }
     else if(game.mission == 1 || game.mission >= 3) {
@@ -784,6 +794,7 @@ Template.voteMissionBad.events({
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
+        resetOnPosition();
         rotateChoosing();
       }
     }
@@ -815,6 +826,7 @@ Template.voteMissionBad.events({
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
       }
+      resetOnPosition();
       rotateChoosing();
     }
     else if(game.mission == 1 || game.mission >= 3) {
@@ -832,6 +844,7 @@ Template.voteMissionBad.events({
         players.forEach(function(player){
           Players.update(player._id, {$set: {hasVotePass: false}});
         });
+        resetOnPosition();
         rotateChoosing();
       }
     }

@@ -226,21 +226,29 @@
       {{#if player.good}}
         <div class="player-status player-status-good">{{_ "You are GOOD" }}</div>
       {{else}}
-        <div class="player-status player-status-bad">{{{_ "You are EVIL" }}}</div>
+        <div class="player-status player-status-bad">{{_ "You are EVIL" }}</div>
       {{/if}}
     </div>
   </div>
 
 
-  <h5>{{_ "Team" }}</h5>
+  <h5>{{_ "ui.players" }}</h5>
   <ul class="ingame-player-list">
     {{#each players}}
       <li>
         <div class="playa-name">
-          {{#if player.onMission}}
+          {{#if player.isChoosing}}
+            <button class="btn-choose-player" data-player-id="{{ _id }}"> {{name}} </button>
+          {{else}}
             {{name}}
           {{/if}}
 
+          {{#if onMission}}
+              <i class="fa fa-pencil"></i>
+          {{else}}
+              <i class="fa fa-close"></i>
+          {{/if}}
+          
           {{#if player.good}}
           {{else}}
             {{#if good}}
