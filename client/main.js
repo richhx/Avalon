@@ -118,7 +118,7 @@ function generateNewGame(){
     expMission: [2,3,2,3,3],
     mission: 0,
     curNumPlayers: 0,
-    readyToConfirm: false
+    readyToConfirm: false,
     missionSuccess: 0
   };
 
