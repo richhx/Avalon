@@ -756,7 +756,5 @@ Template.voteMissionBad.events({
         rotateChoosing();
       }
     }
-    var game = getCurrentGame();
-    Games.update(game._id, {$set: {state: 'inProgress'}});
   }
 });
