@@ -485,6 +485,12 @@ Template.lobby.events({
 
     var game = getCurrentGame();
     var players = Players.find({gameID: game._id});
+
+    if (players.count() < 5){
+      window.alert("Need at least 5 players to start the game");
+      return;
+    }
+
     var firstPlayerIndex = Math.floor(Math.random() * players.count());
 
     players.forEach(function(player,index){
