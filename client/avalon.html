@@ -116,7 +116,7 @@
 
   <div class="button-container">
     <button class="btn-start">{{_ "ui.start game" }}</button>
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    <!--<button class="btn-leave">{{_ "ui.leave game" }}</button> -->
   </div>
 </template>
 
@@ -139,20 +139,10 @@
 
       {{/if}}
 
-      {{#if player.isChoosing}}
-        <div class="player-status player-status-choosing">{{_ "You are Choosing"}}</div>
-      {{/if}}
-
-        
-
-       <!-- <div class="current-role">
-          <div class="current-role-header">
-            {{_ "ui.your role" }}:
-          </div>
-          <div class="current-role-name">
-            {{ player.role }}
-          </div>
-          </div>-->
+        <div class="current-role">
+          <div class="current-role-name">{{ player.name }}</div>
+          <div class="current-role-name">{{ player.role }}</div>
+        </div>
     </div>
   </div>
 
@@ -188,8 +178,8 @@
     <button class="btn-no-team">{{_ "No" }}</button>
     <br>
     <button class="btn-end">{{_ "ui.end game" }}</button>
-    <!--  <button class="btn-rotate">{{_ "rotate" }}</button> -->
-    <button class="btn-leave">{{_ "ui.leave game" }}</button>
+    <!--  <button class="btn-rotate">{{_ "rotate" }}</button>
+    <button class="btn-leave">{{_ "ui.leave game" }}</button> -->
   </div>
 </template>
 
