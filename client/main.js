@@ -224,6 +224,17 @@ function trackGameState () {
   else if(game.state === "doneVoting") {
     Session.set("currentView", "doneVoting");
   }
+  else if(game.state === "notifyVotes") {
+    // print out who voted for what
+    var message = "Player votes:\n";
+    players.forEach(function(player){
+      if(player.noVote)
+        message += player.name + ": NO\n"
+      else
+        message += player.name + ": YES\n"
+    });
+    window.alert(message);
+  }
   else if(game.state === "waitingForPlayers") {
     Session.set("currentView", "lobby");
   }
@@ -243,9 +254,17 @@ function trackGameState () {
   }
 
   if (game.missionSuccess == 3) {
+    // reset all players to good
+    players.forEach(function(player){
+      Players.update(player._id, {$set: {good: true}});
+    });
     Session.set("currentView", "gameWin");
   }
   else if (game.mission - game.missionSuccess == 3) {
+    // reset all players to good
+    players.forEach(function(player){
+      Players.update(player._id, {$set: {good: true}});
+    });
     Session.set("currentView", "gameLose");
   }
   
@@ -639,6 +658,8 @@ Template.votingRound.events({
     // else, vote pass/fail
     game = getCurrentGame();
     if((game.yesCount+game.noCount) == players.count()) {
+      // notify who voted for what
+      Games.update(game._id, {$set: {state: 'notifyVotes'}});
       // print out who voted for what
       var message = "Player votes:\n";
       players.forEach(function(player){
@@ -648,6 +669,7 @@ Template.votingRound.events({
           message += player.name + ": YES\n"
       });
       window.alert(message);
+
       // players agree on the team
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
@@ -695,6 +717,8 @@ Template.votingRound.events({
     game = getCurrentGame();
     // everyone has voted
     if((game.yesCount+game.noCount) == players.count()) {
+      // notify who voted for what
+      Games.update(game._id, {$set: {state: 'notifyVotes'}});
       // print out who voted for what
       var message = "Player votes:\n";
       players.forEach(function(player){
@@ -704,6 +728,7 @@ Template.votingRound.events({
           message += player.name + ": YES\n"
       });
       window.alert(message);
+
       // players agree on the team
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){

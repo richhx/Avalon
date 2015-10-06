@@ -46,6 +46,7 @@
   <h4>{{_ "Mission Status" }}</h4>
   <hr>
   {{ #if game.failCount }}
+    <h5>{{ game.failCount }} </h5>
     <h5>{{_ "FAILED" }}</h5>
   {{ else }}
     <h5>{{_ "PASSED" }}</h5>
