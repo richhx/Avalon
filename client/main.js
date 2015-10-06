@@ -650,7 +650,7 @@ Template.votingRound.events({
         players.forEach(function(player){
           Players.update(player._id, {$set: {yesVote: false, noVote: false}});
         });
-        Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
+        Games.update(game._id, {$set: {state: 'inProgress', yesCount: 0, noCount: 0}});
       }
     }
   },
@@ -682,7 +682,7 @@ Template.votingRound.events({
     // if failed, rotate leader
     // else, vote pass/fail
     game = getCurrentGame();
-    if(game.yesCount+game.noCount == players.count()) {
+    if((game.yesCount+game.noCount) == players.count()) {
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
           Players.update(player._id, {$set: {noVote: false, yesVote: false}});
@@ -694,7 +694,7 @@ Template.votingRound.events({
         players.forEach(function(player){
           Players.update(player._id, {$set: {noVote: false, yesVote: false}});
         });
-        Games.update(game._id, {$set: {yesCount: 0, noCount: 0}});
+        Games.update(game._id, {$set: {state:'inProgress', yesCount: 0, noCount: 0}});
       }
     }
   }
