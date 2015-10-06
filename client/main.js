@@ -639,12 +639,23 @@ Template.votingRound.events({
     // else, vote pass/fail
     game = getCurrentGame();
     if((game.yesCount+game.noCount) == players.count()) {
+      // print out who voted for what
+      var message = "Player votes:\n";
+      players.forEach(function(player){
+        if(player.noVote)
+          message += player.name + ": NO\n"
+        else
+          message += player.name + ": YES\n"
+      });
+      window.alert(message);
+      // players agree on the team
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
           Players.update(player._id, {$set: {yesVote: false, noVote: false}});
         });
         Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});
       }
+      // disagree on the team, rotate the leader/chooser
       else {
         rotateChoosing();
         players.forEach(function(player){
@@ -682,13 +693,25 @@ Template.votingRound.events({
     // if failed, rotate leader
     // else, vote pass/fail
     game = getCurrentGame();
+    // everyone has voted
     if((game.yesCount+game.noCount) == players.count()) {
+      // print out who voted for what
+      var message = "Player votes:\n";
+      players.forEach(function(player){
+        if(player.noVote)
+          message += player.name + ": NO\n"
+        else
+          message += player.name + ": YES\n"
+      });
+      window.alert(message);
+      // players agree on the team
       if(game.yesCount > game.noCount) {
         players.forEach(function(player){
           Players.update(player._id, {$set: {noVote: false, yesVote: false}});
         });   
         Games.update(game._id, {$set: {state: 'voting', yesCount: 0, noCount: 0}});
       }
+      // players disagree on the team, rotate leader/chooser
       else { 
         rotateChoosing();
         players.forEach(function(player){
